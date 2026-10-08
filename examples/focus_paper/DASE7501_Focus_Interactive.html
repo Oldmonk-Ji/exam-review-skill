@@ -321,9 +321,12 @@ tr:nth-child(even) td{background:color-mix(in srgb, var(--panel) 45%, transparen
 <div class="qtext"><p>A sensor has a sensitivity error of <span class="mi">$\pm 0.1\%$</span> of the reading per °C change in temperature. At 20°C it outputs 4.00 V. Estimate the range of the output at 30°C, assuming the sensitivity error is the only source of error.</p></div>
 <button class="rev-btn">点击显示答案解析 ▾</button>
 <div class="sol hidden">
-<div class="sol-body"><p>温度变化 <span class="mi">$\Delta T = 30 - 20 = 10$</span> °C;灵敏度误差为读数每变化 1°C 有 <span class="mi">$\pm 0.1\%$</span>,故总误差 <span class="mi">$= \pm 0.1\% \times 10 = \pm 1\%$</span>。</p>
+<div class="sol-body"><p>讲义定义(p58):灵敏度误差是&quot;<strong>占读数的百分比</strong>&quot;——<span class="mi">$\pm 0.1\%$</span> of the reading per °C,误差基数就是<strong>读数本身</strong>(不是满量程,也不是灵敏度值)。</p>
+<p>温度变化 <span class="mi">$\Delta T = 30 - 20 = 10$</span> °C,故总误差 <span class="mi">$= \pm 0.1\% \times 10 = \pm 1\%$</span> of the reading。</p>
+<p>题目中唯一的读数是 4.00 V,所以把它当基数换算成电压误差:</p>
 <p><div class="mb">$$4.00 \times (\pm 1\%) = \pm 0.04\ \text{V}$$</div></p>
-<p>输出范围:<span class="mi">$4.00 - 0.04 = 3.96$</span> V 到 <span class="mi">$4.00 + 0.04 = 4.04$</span> V,即 3.96--4.04 V。</p></div></div></div>
+<p>输出范围:<span class="mi">$4.00 - 0.04 = 3.96$</span> V 到 <span class="mi">$4.00 + 0.04 = 4.04$</span> V,即 3.96--4.04 V。</p>
+<p>等价视角:灵敏度随温度漂移 <span class="mi">$\pm 1\%$</span>,同一输入下输出变为 <span class="mi">$4.00 \times (1 \pm 0.01)$</span>,结果相同。讲义同款算法见 p53:精度 <span class="mi">$\pm 1\%$</span> of f.s.d.,f.s.d. = 10 A → 误差 <span class="mi">$\pm 0.1$</span> A——百分比必须乘基准量才得到带单位的误差。</p></div></div></div>
 <h3 class="grp">Short Answer (2 questions, 32 marks)</h3>
 <div class="q" data-sec="D" data-id="q19" data-type="reveal" data-answer="">
 <div class="q-top"><span class="tag tag-reveal">简答题</span><span class="qnum">Q19</span></div>
