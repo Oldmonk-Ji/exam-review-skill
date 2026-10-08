@@ -15,7 +15,7 @@ description: 一站式复习资料流水线:从课件(PPT/PDF)、作业(docx)等
 
 ## 工作流总览
 
-1. 探索材料 → 2. 提炼考点 → 3. 设计文档结构 → 4. 写 Markdown → 5. 质量检查 → 6. 编译 PDF → 7. 构建互动 HTML → 8. 验证输出
+1. 探索材料 → 2. 提炼考点 → 3. 设计文档结构 → 4. 写 Markdown(抽象概念按 §4.5 配图)→ 5. 质量检查 → 6. 编译 PDF → 7. 构建互动 HTML → 8. 验证输出
 
 每个数值答案都要独立重算核对后再写入。
 
@@ -62,6 +62,10 @@ header-includes: |
   \usepackage{amsmath}
   \usepackage{amssymb}
   \usepackage{booktabs}
+  \usepackage{graphicx}
+  \setkeys{Gin}{width=\linewidth}
+  \usepackage{float}
+  \floatplacement{figure}{H}
   \usepackage{enumitem}
   \setlist[enumerate]{nosep}
   \usepackage{tcolorbox}
@@ -85,6 +89,17 @@ monofont: "Consolas"
 - 表格每个含公式的格子必须完整包在 `$...$` 内。
 - **英文考试材料约定:题目/题干纯英文、零中文;解析与讲解可带中文括号标注;UI 标签可双语**。写完用脚本逐块校验题目区无 CJK 字符。
 
+## 4.5 配图管线(抽象概念必配图)
+
+抽象内容(坐标系、D-H 参数、变换矩阵、控制框图等)必须配图,否则学生无法建立几何直觉。管线:
+
+1. **手写 SVG**(参考 `tools/make_figures.py`):双语标注(英文术语 + 中文解释)、粗箭头、坐标轴红/绿/蓝三色区分、统一配色与字号。用脚本拼 SVG 字符串,保证可复现。
+2. **渲染**:Edge headless `--headless=new --disable-gpu --user-data-dir=<临时空目录> --screenshot=png --window-size=W,H --force-device-scale-factor=1 --default-background-color=FFFFFFFF file:///xxx.svg`。`--user-data-dir` 必须指向独立临时目录(浏览器子进程会锁 dump 文件,清理用 `mkdtemp` + `shutil.rmtree(ignore_errors=True)`)。
+3. **程序化验证(不可肉眼)**:PIL 像素抽样——输出尺寸与 SVG 画布一致、四角为背景色、墨量占比在 1–75% 区间、各主色(红/蓝/绿)像素计数超过阈值。阈值是抽样伪影,不是渲染缺陷:细线(如 2px 十字)按 3px 步长抽样会漏采,把阈值降到实际命中数以下即可。
+4. **嵌入 md**:`![中文图注(可含 $公式$)](figures/name.png)`;引用块内的图写成 `> ![...](...)` 保持在题框内。
+5. **HTML**:构建器 `figure_html()` 把 PNG base64 内联为 data URI(`<figure class="fig">`),保持单文件离线;图注中的直引号同样要用全角 “ ”(quality_check 会查)。
+6. **PDF**:frontmatter 必须带 `\usepackage{float}` + `\floatplacement{figure}{H}`——tcolorbox(quote 例题框)内的浮动体会报 `Not in outer par mode`;`[H]` 使图就地放置,`\setkeys{Gin}{width=\linewidth}` 使图自适应框宽。
+
 ## 5. 质量检查
 
 ```bash
@@ -107,17 +122,18 @@ pandoc 输出.md -o 输出.pdf --pdf-engine=xelatex
 
 1. **解析**:把 Markdown 解析成题目模型 `{n, sec, text, opts, sol}`——选择题/判断题带选项与答案,计算题/简答题为"点击显示解析"型;答案速查表与逐题详解从 Part 2 提取。
 2. **数学**:`stash_math` 先把 `$...$`/`$$...$$` 替换成 `<span class="mi">`/`<div class="mb">` 占位符,再 HTML 转义,最后还原占位符;页面加载后由 `renderMathInElement` 统一渲染(避免转义破坏公式)。
-3. **离线**:katex.min.css 里所有字体 url 内联 base64;katex.min.js + auto-render.min.js 整体内联进单文件——无任何 CDN 依赖,双击即用。
-4. **交互**(原生 JS,无框架):
+3. **图片**:`![caption](path.png)`(含引用块内 `> ![...]`)被 `figure_html()` 转成 base64 data URI 的 `<figure class="fig">`,缺文件时输出 `fig-missing` 占位并计入 WARNINGS;`![` 行不参与段落合并。
+4. **离线**:katex.min.css 里所有字体 url 内联 base64;katex.min.js + auto-render.min.js 整体内联进单文件——无任何 CDN 依赖,双击即用。
+5. **交互**(原生 JS,无框架):
    - 选择/判断:点击选项 → 答对绿、答错红(正确项同时标绿)+ 锁定 + 自动展开解析;
    - 计算/简答:按钮「点击显示答案解析」展开/收起;
    - localStorage 记录作答与正确率;顶部进度条;成绩单;深浅色主题切换;重置按钮;
    - 页面内放一个 `#selfcheck` 隐藏 div,load 后写入自检 JSON(题数、KaTeX 节点数、渲染错误数、缺答案题号)——供无头验证使用。
-5. 题目区保持纯英文(与真实考试一致),UI 标签与解析可中文。
+6. 题目区保持纯英文(与真实考试一致),UI 标签与解析可中文。
 
 ## 8. 验证
 
-- **PDF**:PyMuPDF 全文检索关键数值与答案;题目区 CJK 字符数为 0。
+- **PDF**:PyMuPDF 全文检索关键数值与答案;题目区 CJK 字符数为 0;配图文档再核对 `page.get_images()` 计数与图注文本存在。
 - **HTML**:一键运行
 
 ```bash
@@ -134,6 +150,9 @@ python tools/verify_html.py 输出.html
 - 出题前先核对讲义表格数字(如机器人类型参数表),否则选项会出现歧义(如"龙门机 vs 关节型"负载上限重叠,应改用应用场景措辞)。
 - 每个生成的数值答案都独立重算一遍再入库(曾出现 RMS 之外还带算术错的情况)。
 - 互动页验证用无头浏览器 dump-dom + selfcheck,比肉眼查更可靠;浏览器更新/本地缓存导致的假错误要用剥 script 法排除。
+- 图放不进例题框:quote 被重定义为 tcolorbox,其内的 pandoc 图默认是浮动体,编译报 `Not in outer par mode`——加 `\usepackage{float}` + `\floatplacement{figure}{H}` 解决。
+- 图注里的中文直引号会被 quality_check 报 warning——图注同样遵守全角引号规则。
+- 无法直接查看图片(Read 工具不支持该会话)时,配图验证必须全程程序化:PIL 像素抽样代替肉眼。
 
 ## 出题原则
 

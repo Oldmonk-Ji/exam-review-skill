@@ -81,6 +81,16 @@ def render_table(tbl):
     out.append('</table></div>')
     return ''.join(out)
 
+def figure_html(path, caption):
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), path.replace('/', os.sep))
+    if not os.path.exists(p):
+        WARNINGS.append('figure missing: ' + path)
+        return '<p class="fig-missing">[Figure missing: %s]</p>' % html.escape(path)
+    b64 = base64.b64encode(open(p, 'rb').read()).decode('ascii')
+    cap = inline(caption) if caption else ''
+    return ('<figure class="fig"><img src="data:image/png;base64,%s" alt="%s" loading="lazy">'
+            '<figcaption>%s</figcaption></figure>' % (b64, html.escape(caption), cap))
+
 def blocks(text):
     lines = text.split('\n')
     out = []
@@ -88,6 +98,12 @@ def blocks(text):
     while i < n:
         s = lines[i].strip()
         if not s:
+            i += 1
+            continue
+        if s.startswith('!['):
+            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)', s)
+            if m:
+                out.append(figure_html(m.group(2), m.group(1)))
             i += 1
             continue
         if s.startswith('|'):
@@ -120,7 +136,7 @@ def blocks(text):
         par = [s]
         i += 1
         while (i < n and lines[i].strip() and
-               not lines[i].strip().startswith(('|', '>')) and
+               not lines[i].strip().startswith(('|', '>', '![')) and
                not re.match(r'^\d+\.\s', lines[i].strip()) and
                not lines[i].strip().startswith('- ')):
             par.append(lines[i].strip())
@@ -703,6 +719,10 @@ tr:nth-child(even) td{background:color-mix(in srgb, var(--panel) 45%, transparen
 .fs-row .bar i{background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .mb{margin:10px 0;overflow-x:auto}
 .mi{white-space:nowrap}
+.fig{margin:14px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:6px}
+.fig-missing{color:var(--bad);font-size:12.5px}
 @media (max-width:900px){
   .layout{flex-direction:column}
   nav.side{width:100%;position:static;max-height:none;display:flex;flex-wrap:wrap;gap:6px;padding:10px}
