@@ -176,7 +176,7 @@ Compute the accuracy and the repeatability of the robot.
 
 (c) What is the switching period, and for how long is the switch ON within one period when $D = 0.25$?
 
-**Q18.** A sensor has a sensitivity error of $\pm 0.1\%$ of the reading per °C change in temperature. At 20°C it outputs 4.00 V. Estimate the range of the output at 30°C, assuming the sensitivity error is the only source of error.
+**Q18.** A sensor is used to measure a constant input. Its sensitivity error is $\pm 0.1\%$ of the reading per °C change in ambient temperature. At an ambient temperature of 20°C the sensor outputs 4.00 V. Estimate the range of the output at an ambient temperature of 30°C, assuming the sensitivity error is the only source of error.
 
 ## Section D: Short Answer (2 questions, 32 marks)
 
@@ -265,6 +265,8 @@ Compute the accuracy and the repeatability of the robot.
 > (c) 开关周期 $T = 1/f = 1/20\,000 = 50\ \mu s$;导通时间 $t_{on} = D \times T = 0.25 \times 50 = 12.5\ \mu s$。
 
 > **【Q18 详解】**
+>
+> 先澄清:这里的 °C 是**环境温度**(ambient temperature),不是被测量——传感器测的是某个恒定输入(讲义 p63–64 把温度列为环境因素 environmental requirements)。被测量没变,所以名义输出仍是 4.00 V;但环境温度从 20°C 升到 30°C 会让灵敏度漂移,实际输出不确定,只能给出范围。
 >
 > 讲义定义(p58):灵敏度误差是"**占读数的百分比**"——$\pm 0.1\%$ of the reading per °C,误差基数就是**读数本身**(不是满量程,也不是灵敏度值)。
 >

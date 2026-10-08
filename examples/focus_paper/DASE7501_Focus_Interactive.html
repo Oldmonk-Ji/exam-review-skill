@@ -318,10 +318,11 @@ tr:nth-child(even) td{background:color-mix(in srgb, var(--panel) 45%, transparen
 <p>(c) 开关周期 <span class="mi">$T = 1/f = 1/20\,000 = 50\ \mu s$</span>;导通时间 <span class="mi">$t_{on} = D \times T = 0.25 \times 50 = 12.5\ \mu s$</span>。</p></div></div></div>
 <div class="q" data-sec="C" data-id="q18" data-type="reveal" data-answer="">
 <div class="q-top"><span class="tag tag-reveal">计算题</span><span class="qnum">Q18</span></div>
-<div class="qtext"><p>A sensor has a sensitivity error of <span class="mi">$\pm 0.1\%$</span> of the reading per °C change in temperature. At 20°C it outputs 4.00 V. Estimate the range of the output at 30°C, assuming the sensitivity error is the only source of error.</p></div>
+<div class="qtext"><p>A sensor is used to measure a constant input. Its sensitivity error is <span class="mi">$\pm 0.1\%$</span> of the reading per °C change in ambient temperature. At an ambient temperature of 20°C the sensor outputs 4.00 V. Estimate the range of the output at an ambient temperature of 30°C, assuming the sensitivity error is the only source of error.</p></div>
 <button class="rev-btn">点击显示答案解析 ▾</button>
 <div class="sol hidden">
-<div class="sol-body"><p>讲义定义(p58):灵敏度误差是&quot;<strong>占读数的百分比</strong>&quot;——<span class="mi">$\pm 0.1\%$</span> of the reading per °C,误差基数就是<strong>读数本身</strong>(不是满量程,也不是灵敏度值)。</p>
+<div class="sol-body"><p>先澄清:这里的 °C 是<strong>环境温度</strong>(ambient temperature),不是被测量——传感器测的是某个恒定输入(讲义 p63–64 把温度列为环境因素 environmental requirements)。被测量没变,所以名义输出仍是 4.00 V;但环境温度从 20°C 升到 30°C 会让灵敏度漂移,实际输出不确定,只能给出范围。</p>
+<p>讲义定义(p58):灵敏度误差是&quot;<strong>占读数的百分比</strong>&quot;——<span class="mi">$\pm 0.1\%$</span> of the reading per °C,误差基数就是<strong>读数本身</strong>(不是满量程,也不是灵敏度值)。</p>
 <p>温度变化 <span class="mi">$\Delta T = 30 - 20 = 10$</span> °C,故总误差 <span class="mi">$= \pm 0.1\% \times 10 = \pm 1\%$</span> of the reading。</p>
 <p>题目中唯一的读数是 4.00 V,所以把它当基数换算成电压误差:</p>
 <p><div class="mb">$$4.00 \times (\pm 1\%) = \pm 0.04\ \text{V}$$</div></p>
