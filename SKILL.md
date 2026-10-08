@@ -153,6 +153,7 @@ python tools/verify_html.py 输出.html
 - 图放不进例题框:quote 被重定义为 tcolorbox,其内的 pandoc 图默认是浮动体,编译报 `Not in outer par mode`——加 `\usepackage{float}` + `\floatplacement{figure}{H}` 解决。
 - 图注里的中文直引号会被 quality_check 报 warning——图注同样遵守全角引号规则。
 - 无法直接查看图片(Read 工具不支持该会话)时,配图验证必须全程程序化:PIL 像素抽样代替肉眼。
+- 画坐标系必须验证右手性:屏幕坐标(y 向下)里 Z 轴垂直纸面向外时,Y 轴屏幕角 = X 轴屏幕角 − 90°(曾把 D-H 建系图的远端两个坐标系画成左手系被用户纠正)。验证三法:SVG 文本解析确认每帧 Y 角 = X 角 − 90°、按线段中点坐标做像素抽样(应命中对应颜色)、旧方向坐标抽样应返回 False。屏幕角 −135° 是"左上"不是"左下"(y 轴向下,atan2 直觉会骗人)。
 
 ## 出题原则
 

@@ -159,12 +159,14 @@ def dh_frames_planar2():
     # axes frame 0
     b.append(axhead(O0[0], O0[1], 0, RED, 'X₀', O0[0] + 82, O0[1] + 16))
     b.append(axhead(O0[0], O0[1], -90, GREEN, 'Y₀', O0[0] - 24, O0[1] - 80))
-    # axes frame 1 (link1 dir = 45 deg up-right -> screen angle -45)
+    # axes frame 1 (link1 dir = 45 deg up-right -> screen angle -45;
+    # right-handed: Y at screen angle X-90 = -135)
     b.append(axhead(O1[0], O1[1], -45, RED, 'X₁', O1[0] + 58, O1[1] - 62))
-    b.append(axhead(O1[0], O1[1], 45, GREEN, 'Y₁', O1[0] + 60, O1[1] + 64))
-    # axes frame 2 (link2 dir: angle -75 deg in screen (105 deg math))
+    b.append(axhead(O1[0], O1[1], -135, GREEN, 'Y₁', O1[0] - 115, O1[1] + 65))
+    # axes frame 2 (link2 dir: angle -75 deg in screen (105 deg math);
+    # right-handed: Y at screen angle X-90 = -165)
     b.append(axhead(O2[0], O2[1], -75, RED, 'X₂', O2[0] - 60, O2[1] - 84))
-    b.append(axhead(O2[0], O2[1], 15, GREEN, 'Y₂', O2[0] + 82, O2[1] - 20))
+    b.append(axhead(O2[0], O2[1], -165, GREEN, 'Y₂', O2[0] - 63, O2[1] - 25))
     # Z out-of-page symbols
     b.append(zsym(O0[0], O0[1] - 26, 'Z₀'))
     b.append(zsym(O1[0], O1[1] - 26, 'Z₁'))
@@ -190,11 +192,11 @@ def dh_frames_planar2():
     b.append(dim(a2s[0], a2s[1], a2e[0], a2e[1]))
     b.append(txt(300, 200, 'a₂ = l₂', 15, 'bold', GRAY))
     # legend
-    b.append(rect(30, 70, 330, 74, '#ffffff', LINE, 1.5, 10))
+    b.append(rect(30, 70, 400, 74, '#ffffff', LINE, 1.5, 10))
     b.append(txt(52, 96, 'X 轴:红色', 13.5, 'bold', RED, 'start'))
     b.append(txt(52, 118, 'Y 轴:绿色', 13.5, 'bold', GREEN, 'start'))
     b.append(txt(180, 96, 'Z 轴:蓝色 ⊙(垂直纸面向外)', 13.5, 'bold', BLUE, 'start'))
-    b.append(txt(180, 118, '原点 Oᵢ 在各关节中心', 13.5, 'normal', GRAY, 'start'))
+    b.append(txt(180, 118, '原点在关节中心 · 右手系 X × Y = Z', 13.5, 'normal', GRAY, 'start'))
     # note
     b.append(rect(560, 600, 370, 84, '#fff8ec', '#d9a53f', 1.5, 10))
     b.append(txt(745, 626, '本例:Z₀ ∥ Z₁ ∥ Z₂ → α₁ = α₂ = 0、d₁ = d₂ = 0', 13, 'bold', '#8a6a1f'))
