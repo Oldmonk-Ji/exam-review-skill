@@ -1,0 +1,51 @@
+# Task contract for the skill agent; existing builders may need adaptation.
+# null means unresolved. Populate from the request before asking missing items.
+schema_version: 1
+preset: null                  # optional: maintainer, or a user-named preset
+materials:
+  sources: []
+  included_scope: null
+  excluded_scope: []
+  external_references: null   # supplied_only | authoritative_supplement
+study:
+  goal: null                 # foundations | review | sprint | mock_exam
+  time_budget_minutes: null
+  organization: null         # slides | topics | exam_types | custom
+  custom_outline: []
+  sequence: null             # explain_then_practise | practise_then_review | separate
+language:
+  explanation: null          # zh | en | bilingual | user-specified
+  question: null
+  solution: null
+  bilingual_layout: null     # en_then_zh | side_by_side | zh_with_en_terms
+  terminology: null          # first_use_inline | per_chapter | glossary | custom
+math:
+  foundation: null           # beginner | standard | advanced
+  derivation: null           # every_step | key_steps | formula_and_conditions
+questions:
+  mode: null                 # exact | at_most | none | proposal_pending
+  count: null                # positive integer for exact/at_most; never infer 60
+  types: []
+  difficulty: null
+  sample_emphasis: null
+  repetition: null           # distinct_reasoning | labelled_drill
+  answer_location: null      # after_each | chapter_end | document_end | separate
+output:
+  formats: []                # markdown | html | pdf
+  primary_device: null       # desktop | phone_wechat | print
+  figures: null              # necessary | rich | none
+  html:
+    mode: null               # static | interactive
+    navigation: null         # sidebar | top | custom
+    features: []             # search | bookmarks | timer | progress
+    offline: null
+  pdf:
+    page_size: null
+    font_size_pt: null
+    bookmarks: null
+  appearance:
+    theme: null
+    reference_template: null
+  progress_policy: null      # preserve_when_compatible | migrate | reset_if_requested
+decisions: []                # [{field: questions.count, source: current_request}]
+pending_questions: []
