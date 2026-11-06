@@ -1,0 +1,40 @@
+{
+  "title": "Synthetic review <script>alert(1)</script>",
+  "status": "Synthetic only",
+  "sidebar": true,
+  "exam_minutes": 5,
+  "chapters": [
+    {
+      "id": "unit-1",
+      "title": "Unit <one>",
+      "source": "Synthetic source",
+      "notes": "$a<b$ and $a>b$. [safe](https://example.com) [unsafe](javascript:alert(1))",
+      "sections": [
+        {
+          "id": "lesson-1",
+          "title": "Example",
+          "english_title": "Example lesson",
+          "symbols": "$x$ is a variable",
+          "pages": "1–2",
+          "body": "$$\\begin{matrix}1&2\\\\3&4\\end{matrix}$$",
+          "bilingual": [
+            {
+              "en": "A useful example.",
+              "zh": "合成示例。"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q3",
+      "chapter": "unit-1",
+      "type": "reveal",
+      "text": "Explain $x<y$.",
+      "solution": "Explain the relation.",
+      "source": "Synthetic"
+    }
+  ]
+}

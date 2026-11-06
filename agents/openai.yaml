@@ -1,0 +1,4 @@
+interface:
+  display_name: "课程复习与离线练习"
+  short_description: "按课程材料生成可追溯的双语复习内容、模拟题和离线互动练习"
+  default_prompt: "使用 $exam-review-skill，根据这些课程材料生成复习内容，并按我的题量、语言和输出要求交付。"

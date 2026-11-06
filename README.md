@@ -1,79 +1,65 @@
 # exam-review-skill
 
-一站式复习资料流水线:**课件(PPT/PDF)+ 作业(docx) → 复习全书 / 试卷(Markdown + PDF)→ 单文件离线互动复习网页(HTML)**。
+从课程 PDF/PPTX、作业和已提供的考试范例，生成有来源的讲义、练习、模拟卷，以及单文件离线互动 HTML。支持 Codex 和 Claude Code；可按需求只交付 Markdown、PDF 或 HTML。
 
-本仓库同时是 Claude Code 可安装的 skill(见 [SKILL.md](SKILL.md)),也可以把 `tools/` 下的脚本独立使用。
+当前默认入口采用维护者 ai-exam-review 的通用 JSON 构建器，合并本仓库的任务配置流程。它不依赖 Windows 盘符、某一门课的固定标题、题号或答案表。
 
 ## 按本次需求定制
 
-技能启动时先读取已知需求，只询问缺失项：**题量及上限/精确数量、语言和讲解方式、输出格式与阅读设备**。题量没有固定默认值，60 道只是可选示例；已确认的要求不反复询问。
+先复用已明确的范围、题量、语言、阅读设备与格式，仅询问缺失的关键项。题量区分精确数量、上限与不出题，没有固定题数。详见 [启动配置](references/customization.md) 和 [配置模板](assets/review-config.example.yaml)。
 
-详见 [启动问答与配置维度](references/customization.md) 和 [配置模板](assets/review-config.example.yaml)。还可定制章节组织、数学基础、推导深度、题型难度、答案位置、图示、导航交互与视觉版式。支持只出讲义、不出题，或只生成一种格式。
-
-[维护者历史偏好](references/review-preferences.md) 可作为选用的预设，不强加给所有任务。`review-config.yaml` 是技能助手的任务契约；现有 `tools/` 是参考实现，尚非自动解析全部配置的通用构建引擎，助手需根据所选配置适配并验证产物。
+review-config.yaml 是助手读取的任务契约，不是构建器自动消费全部选项的参数文件。实际 HTML 输入格式见 [JSON schema](references/data-schema.md)。题干、讲解与解析语言由内容决定；默认工具栏为中文。
 
 ## 功能
 
-- **材料解析**:PPT/讲义 PDF 文本提取(含矢量绘制符号的 `get_drawings()` 复核、GoodNotes 手写批注层)、docx 作业经 pandoc 转换。
-- **考点提炼与出题**:选择 / 判断 / 计算 / 简答,基础题 → 变式题 → 综合题,真题风格优先。
-- **PDF 输出**:pandoc + xelatex(MiKTeX),中文 ctexart(SimSun / Microsoft YaHei)+ Times New Roman,例题框、表格、公式排版。
-- **互动复习网页**:单文件 HTML,KaTeX 全部内联(base64 字体 + 内联 JS,离线可用、无 CDN);选择题/判断题点击判分(绿对红错 + 自动展开解析),计算/简答题点击显示解析;localStorage 记录进度与正确率、成绩单、深浅色主题。
-- **自动验证**:`quality_check.py` 检查 Markdown 常见错误;`verify_html.py` 用无头浏览器跑页面,解析页面自检 JSON(KaTeX 加载状态、渲染错误、缺答案题号)。
+- 章节与细分讲解目录，双语解释、符号说明、来源页码，以及题目到讲解的链接。
+- 选择、判断、计算/简答题；答案显式来自 JSON。支持 questions=[] 的纯讲义。
+- 搜索、难度、错题、收藏和未作答筛选，简答草稿，本地进度与主题切换。
+- 只有显式设置 exam_minutes 才启用计时闭卷自测。启动、结束和重置有确认提示；期限在刷新后保留。离线 HTML 中仍包含答案，不能用于正式防作弊考试。
+- KaTeX 0.16.11、20个字体与图片可内嵌，无 CDN。题库变化默认切换进度标识，兼容布局更新可显式保留旧标识。
+- 全部数值答案独立验算，材料范围与页码追踪，HTML/PDF需按实际环境做相应验收。
 
-## 目录结构
+## 使用
 
-```
-exam-review-skill/
-├── SKILL.md                     # Claude Code skill 定义(完整工作流)
-├── tools/
-│   ├── quality_check.py         # Markdown 质量检查(横线/引号/公式/Unicode 符号)
-│   ├── build_focus_paper.py     # 互动页构建器(单卷模板,推荐从这里上手改)
-│   ├── build_interactive_review.py  # 互动页构建器(全书+多卷参考实现)
-│   ├── verify_html.py           # 无头浏览器冒烟测试 + 页面自检
-│   └── katex_assets/            # KaTeX 0.16.x 离线资源(MIT / SIL OFL)
-└── examples/
-    └── focus_paper/             # 完整示例:DASE7501 聚焦卷(L1/L2/L4)
-        ├── DASE7501_Focus_Paper_L1L2L4.md    # 试卷源文件(Part 1 纯英文题目 + Part 2 双语解析)
-        ├── DASE7501_Focus_Paper_L1L2L4.pdf   # 编译出的 PDF
-        └── DASE7501_Focus_Interactive.html   # 构建出的互动网页(双击即用)
+将完整技能目录放到运行环境的技能目录，或通过该环境支持的技能安装功能安装。Codex 本地示例：
+
+```sh
+git clone https://github.com/Oldmonk-Ji/exam-review-skill.git ~/.codex/skills/exam-review-skill
 ```
 
-## 快速开始
+Claude Code 可放在 ~/.claude/skills/exam-review-skill。云端安装必须包含完整 scripts/ 及离线资源，不要仅复制 SKILL.md 或引用本机路径。
 
-### 作为 Claude Code skill 使用
+构建 HTML 仅需 Python 3.9+ 标准库：
 
-```bash
-# 克隆到 Claude Code 技能目录
-git clone https://github.com/<你的账号>/exam-review-skill.git ~/.claude/skills/exam-review-skill
+```sh
+python /path/to/exam-review-skill/scripts/build_review.py input.json output.html
+python /path/to/exam-review-skill/scripts/build_review.py --help
 ```
 
-之后在会话中直接说"根据这些 PPT 帮我生成复习资料/模拟卷/互动练习网页"即可触发。
+图片相对路径基于 input.json 所在目录。先创建输出目录；指定的 output.html 会被写入。用 tests/fixtures/mixed.json、reveal.json 或 notes.json 可运行不含课程私人资料的示例。
 
-### 独立使用工具链
+PDF 是可选工序，使用环境可用的排版工具及实际字体，见 [PDF 工作流](references/pdf-workflow.md)。PPTX 用适当解析器或先转换，不能直接当作 PDF 交给 PyMuPDF。
 
-```bash
-# 1. 生成互动网页(以示例为例)
-cd examples/focus_paper
-python ../../tools/build_focus_paper.py
-# 2. 编译 PDF(需要 pandoc + MiKTeX/xelatex)
-pandoc DASE7501_Focus_Paper_L1L2L4.md -o DASE7501_Focus_Paper_L1L2L4.pdf --pdf-engine=xelatex
-# 3. 验证互动页(需要 Edge 或 Chrome)
-python ../../tools/verify_html.py DASE7501_Focus_Interactive.html
+## 检查
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v
+node --check scripts/review.js
+node tests/test_state.js
 ```
 
-自己写新材料时:照 `examples/focus_paper/*.md` 的结构写题目(Part 1 题目 / Part 2 解析 + 答案速查),把 `build_focus_paper.py` 顶部的 `SRC`/`OUT` 改成你的文件名即可。
+Python/Node测试不等于真实浏览器验收。还应检查页面的公式、导航、判分、筛选、草稿、刷新恢复、确认取消、计时和窄屏。页面提供 #selfcheck 和 window.reviewSelfcheck 诊断信息。构建结果从不代表课程内容或考试得分已获保证。
 
-## 示例(Examples)
+## 目录与兼容
 
-`examples/focus_paper/` 是香港大学 DASE7501 机器人课程的一份 20 题聚焦卷(范围 Lecture 1/2/4,题型仿作业与往年考试:机器人应用、自由度、选型、精度/重复性、灵敏度、PWM),以教学演示目的发布。
+- SKILL.md、agents/openai.yaml：技能入口与 Codex 元数据。
+- scripts/：推荐的通用 JSON 构建器与完整离线资源。
+- references/、assets/：任务配置、数据合同、学科检查及可选 PDF 指引。
+- tests/：合成回归测试。
+- tools/、examples/focus_paper/：保留旧 DASE7501 参考实现和已公开示例，以兼容原有工作；其中旧构建器有课程专用参数，不是新的通用入口。
 
-## 依赖
+请把课程原件、考试日期、个人作答和项目配置留在各自输出项目，勿自动提交到此技能仓库。
 
-- Python 3.8+(PyMuPDF 用于 PDF 验证;构建器本身仅用标准库)
-- pandoc + xelatex(MiKTeX 或 TeX Live)用于编译 PDF
-- Microsoft Edge 或 Google Chrome 用于 HTML 无头验证
-- KaTeX 0.16.x 已随仓库分发(MIT License;字体 SIL OFL 1.1)
+## 许可
 
-## License
-
-[MIT](LICENSE) © 2026 Oldmonk-Ji
+[MIT](LICENSE) © 2026 Oldmonk-Ji。随附 KaTeX 的官方许可见 [KaTeX LICENSE](scripts/katex_assets/LICENSE)。

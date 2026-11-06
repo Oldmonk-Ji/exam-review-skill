@@ -37,7 +37,8 @@ output:
   html:
     mode: null               # static | interactive
     navigation: null         # sidebar | top | custom
-    features: []             # search | bookmarks | timer | progress
+    features: []             # search | difficulty | wrong_answers | bookmarks | drafts | progress; other features need implementation
+    exam_minutes: null        # explicit positive duration; omitted means no timed practice
     offline: null
   pdf:
     page_size: null
